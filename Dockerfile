@@ -13,3 +13,4 @@ RUN pip install -r requirements.txt --proxy http://host.docker.internal:10809
 COPY ./core /app/
 
 #CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
