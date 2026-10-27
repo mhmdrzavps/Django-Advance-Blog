@@ -8,5 +8,9 @@
 <body>
     <h1>index</h1>
     <h1>{{name}}</h1>
+    {% for post in posts %}
+    <h1>{{post.author.email}}</h1>
+    {% endfor %}
+
 </body>
 </html>
