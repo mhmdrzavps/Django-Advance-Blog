@@ -11,16 +11,18 @@
           {% endfor %}
      --->
     {% for post in posts %}
-    <div>
+    <li>
         <a href="{% url 'blog:post-detail' pk=post.id %}" <h2>{{post.title}}</h2> ></a>
         <p>{{post.content}}</p>
         <a href="{% url 'blog:post-update' pk=post.id %}" <h2>Edit</h2> ></a>
         <a href="{% url 'blog:post-delete' pk=post.id %}" <h2>Delete</h2> ></a>
         <p>{{post.published_date}}</p>
+        <p>{{post.author.first_name}}{{post.author.last_name}}</p>
 
 
 
-    </div>
+
+    </li>
     {% endfor %}
     <div class="pagination">
     <span class="step-links">
