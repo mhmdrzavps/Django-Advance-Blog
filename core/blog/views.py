@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from blog.models import Post
 from blog.form import ContactForm, PostForm
 from  datetime import datetime
@@ -39,18 +40,21 @@ def RedirectMaktabkhooneh(request):
 
 class RedirectToMaktabkhooneh(RedirectView):
 
-    url = 'https://maktabkhooneh.org/'
+    #url = 'https://maktabkhooneh.org/'
+    pattern_name = 'blog:cbv-index'
 
     def get_redirect_url(self, *args, **kwargs):
         post = get_object_or_404(Post, pk=kwargs['pk'])
         print(post)
-        return super().get_redirect_url(*args, **kwargs)
+        #return super().get_redirect_url(*args, **kwargs)
+        return super().get_redirect_url()
 
-class PostList(ListView):
+class PostList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Post
+    permission_required = 'blog.view_post'
     # queryset = Post.objects.all()
     context_object_name = 'posts'
-    paginate_by = 2
+    #paginate_by = 2
     ordering = 'id'
 
     #def get_queryset(self):
@@ -60,7 +64,7 @@ class PostList(ListView):
         queryset =  super().get_queryset()
         return queryset.filter(status = True)
 
-class PostDetailView(DetailView):
+class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
 
     def get_context_data(self, **kwargs):
@@ -68,11 +72,33 @@ class PostDetailView(DetailView):
         contex['now'] = datetime.now()
         return contex
 
-class postCreateView(FormView):
+class postCreateView(LoginRequiredMixin, FormView):
     template_name = 'contact.html'
     form_class = PostForm
-    success_url = '/blog/post'
+    success_url = '/blog/post/'
 
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+
+    model = Post
+    #fields = ['author', 'title', 'content', 'category', 'published_date']
+    form_class = PostForm
+    success_url = '/blog/post/'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    success_url = '/blog/post/'
+
+
+class PostDeleteView(LoginRequiredMixin, DeleteView):
+    model = Post
+    success_url = '/blog/post/'

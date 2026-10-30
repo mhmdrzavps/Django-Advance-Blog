@@ -16,7 +16,7 @@ class Post(models.Model):
     counted_view = models.IntegerField(default= 0)
     created_date = models.DateTimeField(auto_now_add= True)
     updated_date = models.DateTimeField(auto_now= True)
-    published_date = models.DateTimeField(null= True)
+    published_date = models.DateTimeField(null= True, blank= True)
 
     def __str__(self):
         return self.title
